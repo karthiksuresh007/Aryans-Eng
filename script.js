@@ -152,15 +152,49 @@ filterButtons.forEach((button) => {
 });
 
 if (form) {
-  form.addEventListener("submit", (event) => {
+  const submitButton = form.querySelector('button[type="submit"]');
+  const defaultButtonHtml = submitButton ? submitButton.innerHTML : "";
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    form.style.display = "none";
-    successMessage.classList.add("visible");
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending enquiry...";
+    }
+
+    successMessage.classList.remove("visible");
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Formspree request failed");
+      }
+
+      form.reset();
+      form.style.display = "none";
+      successMessage.innerHTML = "&#10003; Your enquiry has been received. We'll contact you within 24 hours.";
+      successMessage.classList.add("visible");
+    } catch (error) {
+      successMessage.textContent = "Unable to send the enquiry right now. Please call or WhatsApp us directly.";
+      successMessage.classList.add("visible");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = defaultButtonHtml;
+      }
+    }
   });
 }
 
