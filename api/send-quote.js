@@ -1,4 +1,4 @@
-const QUOTE_TO_EMAIL = "aryansengineeringlimited@gmail.com";
+﻿const QUOTE_TO_EMAIL = "aryansengineeringlimited@gmail.com";
 const RESEND_API_URL = "https://api.resend.com/emails";
 
 const escapeHtml = (value = "") =>
@@ -25,7 +25,7 @@ const readBody = (body) => {
   return body;
 };
 
-module.exports = async (req, res) => {
+const handleSendQuote = async (req, res) => {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -119,3 +119,7 @@ module.exports = async (req, res) => {
     });
   }
 };
+
+module.exports = handleSendQuote;
+module.exports.handleSendQuote = handleSendQuote;
+

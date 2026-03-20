@@ -1,4 +1,4 @@
-# Aryan's Engineering
+﻿# Aryan's Engineering
 
 Static marketing website for Aryan's Engineering.
 
@@ -7,18 +7,18 @@ Static marketing website for Aryan's Engineering.
 - `index.html` - page markup
 - `styles.css` - site styling
 - `script.js` - interactions and UI behavior
+- `api/send-quote.js` - Resend email handler
+- `server.js` - local static server with quote API route
 
 ## Deploy
 
-This site includes a server-side quote handler for Resend. Deploy it to a platform that supports serverless functions, such as:
+This site includes a server-side quote handler for Resend. Deploy it to a platform that supports serverless functions or Node servers, such as:
 
 - Vercel
 - Netlify
 - Any Node/serverless host
 
 ## Resend Setup
-
-This repository uses a server-side quote endpoint at `api/send-quote.js`.
 
 Set this environment variable in your deployment platform:
 
@@ -28,4 +28,12 @@ The current handler sends quote enquiries to `aryansengineeringlimited@gmail.com
 
 ## Local Preview
 
-Open `index.html` in a browser, or serve the folder with any static server.
+Do not use Live Server for form testing because it cannot handle `POST /api/send-quote`.
+
+Use:
+
+```bash
+node server.js
+```
+
+Then open [http://localhost:3000](http://localhost:3000).

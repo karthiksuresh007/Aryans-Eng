@@ -1,0 +1,10 @@
+﻿{
+  "name": "aryans-engineering-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Aryan's Engineering marketing website",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  }
+}

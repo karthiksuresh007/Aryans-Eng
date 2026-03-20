@@ -1,4 +1,4 @@
-/* Aryan's Engineering site interactions */
+﻿/* Aryan's Engineering site interactions */
 
 document.body.classList.add("js-ready");
 
@@ -181,7 +181,7 @@ if (form) {
       });
 
       if (!response.ok) {
-        throw new Error("Formspree request failed");
+        throw new Error("Quote request failed");
       }
 
       form.reset();
@@ -189,7 +189,7 @@ if (form) {
       successMessage.innerHTML = "&#10003; Your enquiry has been received. We'll contact you within 24 hours.";
       successMessage.classList.add("visible");
     } catch (error) {
-      successMessage.textContent = "Unable to send the enquiry right now. Please call or WhatsApp us directly.";
+      successMessage.textContent = "Unable to send the enquiry right now. Start the included Node server or deploy the site to a serverless host with RESEND_API_KEY configured.";
       successMessage.classList.add("visible");
     } finally {
       if (submitButton) {
@@ -226,3 +226,4 @@ observedSections.forEach((section) => {
 window.setTimeout(() => {
   whatsappFloat.classList.add("visible");
 }, 3000);
+
