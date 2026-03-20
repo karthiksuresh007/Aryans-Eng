@@ -10,12 +10,21 @@ Static marketing website for Aryan's Engineering.
 
 ## Deploy
 
-This is a plain static site. It can be deployed directly to:
+This site includes a server-side quote handler for Resend. Deploy it to a platform that supports serverless functions, such as:
 
-- GitHub Pages
-- Netlify
 - Vercel
-- Any static web host
+- Netlify
+- Any Node/serverless host
+
+## Resend Setup
+
+This repository uses a server-side quote endpoint at `api/send-quote.js`.
+
+Set this environment variable in your deployment platform:
+
+- `RESEND_API_KEY`
+
+The current handler sends quote enquiries to `aryansengineeringlimited@gmail.com` using `onboarding@resend.dev` as the sender.
 
 ## Local Preview
 

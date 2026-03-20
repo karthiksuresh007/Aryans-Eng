@@ -170,12 +170,14 @@ if (form) {
     successMessage.classList.remove("visible");
 
     try {
+      const payload = Object.fromEntries(new FormData(form).entries());
       const response = await fetch(form.action, {
         method: form.method,
-        body: new FormData(form),
         headers: {
-          Accept: "application/json"
-        }
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
