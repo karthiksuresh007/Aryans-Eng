@@ -1,0 +1,192 @@
+/* Aryan's Engineering site interactions */
+
+document.body.classList.add("js-ready");
+
+const nav = document.querySelector(".site-nav");
+const navToggle = document.querySelector(".nav-toggle");
+const navMenuWrap = document.querySelector(".nav-menu-wrap");
+const navLinks = Array.from(document.querySelectorAll(".nav-link"));
+const revealElements = document.querySelectorAll(".reveal, .stagger");
+const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
+const portfolioCards = Array.from(document.querySelectorAll(".portfolio-card"));
+const counters = document.querySelectorAll(".counter");
+const statsSection = document.querySelector(".stats-bar");
+const form = document.getElementById("quote-form");
+const successMessage = document.getElementById("form-success");
+const whatsappFloat = document.getElementById("whatsapp-float");
+const observedSections = Array.from(document.querySelectorAll("main section[id], header[id]"));
+const imageFallback =
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000'>" +
+      "<rect width='1600' height='1000' fill='#111111'/>" +
+      "<rect x='60' y='60' width='1480' height='880' fill='none' stroke='#2a2a2a' stroke-width='4'/>" +
+      "<path d='M0 760 L1600 320' stroke='#e07b2a' stroke-width='6' opacity='0.35'/>" +
+      "<text x='120' y='470' fill='#f0f2f4' font-family='Arial, sans-serif' font-size='110' letter-spacing='8'>ARYAN'S ENGINEERING</text>" +
+      "<text x='120' y='590' fill='#b0b8c1' font-family='Arial, sans-serif' font-size='46' letter-spacing='10'>INDUSTRIAL IMAGE UNAVAILABLE</text>" +
+    "</svg>"
+  );
+let countersStarted = false;
+
+const setNavState = () => {
+  nav.classList.toggle("scrolled", window.scrollY > 80);
+};
+
+document.querySelectorAll("img").forEach((img) => {
+  img.addEventListener("error", () => {
+    if (img.dataset.fallbackApplied) {
+      return;
+    }
+
+    img.dataset.fallbackApplied = "true";
+    img.src = imageFallback;
+  });
+});
+
+setNavState();
+window.addEventListener("scroll", setNavState, { passive: true });
+
+navToggle.addEventListener("click", () => {
+  const expanded = navToggle.getAttribute("aria-expanded") === "true";
+  navToggle.setAttribute("aria-expanded", String(!expanded));
+  navMenuWrap.classList.toggle("open", !expanded);
+});
+
+navLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    navToggle.setAttribute("aria-expanded", "false");
+    navMenuWrap.classList.remove("open");
+  });
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) {
+      return;
+    }
+
+    if (entry.target.classList.contains("stagger")) {
+      Array.from(entry.target.children).forEach((child, index) => {
+        child.style.transitionDelay = `${index * 0.1}s`;
+      });
+    }
+
+    entry.target.classList.add("visible");
+    revealObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.16 });
+
+revealElements.forEach((element) => revealObserver.observe(element));
+
+const animateCounter = (element) => {
+  const target = Number(element.dataset.target || 0);
+  const suffix = element.dataset.suffix || "";
+  const duration = 2000;
+  const start = performance.now();
+
+  const tick = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    element.textContent = `${Math.round(target * eased)}${suffix}`;
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      element.textContent = `${target}${suffix}`;
+    }
+  };
+
+  requestAnimationFrame(tick);
+};
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting && !countersStarted) {
+      countersStarted = true;
+      counters.forEach(animateCounter);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+if (statsSection) {
+  counterObserver.observe(statsSection);
+}
+
+const portfolioTimers = new WeakMap();
+
+const showCard = (card) => {
+  if (portfolioTimers.has(card)) {
+    clearTimeout(portfolioTimers.get(card));
+    portfolioTimers.delete(card);
+  }
+
+  card.hidden = false;
+  requestAnimationFrame(() => card.classList.remove("is-hidden"));
+};
+
+const hideCard = (card) => {
+  card.classList.add("is-hidden");
+  const timer = setTimeout(() => {
+    card.hidden = true;
+  }, 280);
+  portfolioTimers.set(card, timer);
+};
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const filter = button.dataset.filter;
+    filterButtons.forEach((item) => item.classList.toggle("active", item === button));
+
+    portfolioCards.forEach((card) => {
+      const categories = (card.dataset.category || "").split(" ");
+      const matches = filter === "all" || categories.includes(filter);
+
+      if (matches) {
+        showCard(card);
+      } else {
+        hideCard(card);
+      }
+    });
+  });
+});
+
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    form.style.display = "none";
+    successMessage.classList.add("visible");
+  });
+}
+
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) {
+      return;
+    }
+
+    const activeId = entry.target.id;
+    navLinks.forEach((link) => {
+      const isActive = link.getAttribute("href") === `#${activeId}`;
+      link.classList.toggle("active", isActive);
+    });
+  });
+}, {
+  threshold: 0.45,
+  rootMargin: "-20% 0px -35% 0px"
+});
+
+observedSections.forEach((section) => {
+  if (section.id && section.id !== "hero") {
+    sectionObserver.observe(section);
+  }
+});
+
+window.setTimeout(() => {
+  whatsappFloat.classList.add("visible");
+}, 3000);
