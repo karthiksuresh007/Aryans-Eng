@@ -571,6 +571,64 @@
       line-height: 0.87;
       max-width: 720px;
       margin-bottom: 26px;
+      position: relative;
+      display: inline-grid;
+      gap: 0.04em;
+      padding: 0.04em 0.08em 0.08em 0;
+      transform-style: preserve-3d;
+      text-shadow:
+        calc(var(--hero-title-x, 0) * 10px) calc(var(--hero-title-y, 0) * 10px) 24px rgba(0, 0, 0, 0.32),
+        0 0 18px rgba(224, 123, 42, 0.08);
+      transition: transform 0.18s ease, text-shadow 0.18s ease;
+    }
+
+    .hero-title::before {
+      content: "";
+      position: absolute;
+      inset: -0.08em -0.04em;
+      background:
+        radial-gradient(circle at var(--hero-title-glow-x, 50%) var(--hero-title-glow-y, 50%), rgba(224, 123, 42, 0.18), transparent 42%),
+        linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.12) 50%, transparent 80%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      filter: blur(8px);
+    }
+
+    .hero-title-line {
+      position: relative;
+      display: block;
+    }
+
+    .hero-title-line:first-child::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 14%;
+      bottom: -0.02em;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(224, 123, 42, 0.9), rgba(224, 123, 42, 0));
+      opacity: 0.9;
+    }
+
+    .hero-title-accent {
+      position: relative;
+      display: inline-block;
+      padding-right: 0.04em;
+    }
+
+    .hero-title-accent::after {
+      content: "";
+      position: absolute;
+      inset: -0.04em -0.08em;
+      background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 68%);
+      transform: translateX(var(--hero-title-sweep, -115%));
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    body.js-ready .hero-title-accent::after {
+      animation: steelSweep 3.4s ease-in-out infinite;
     }
 
     .hero-copy {
@@ -1630,6 +1688,17 @@
       }
     }
 
+    @keyframes steelSweep {
+      0%,
+      18% {
+        transform: translateX(-115%);
+      }
+      36%,
+      100% {
+        transform: translateX(125%);
+      }
+    }
+
     @keyframes reviewRail {
       from {
         transform: translateX(-50%);
@@ -1785,6 +1854,10 @@
 
       .hero-title {
         font-size: clamp(4.1rem, 18vw, 6.4rem);
+      }
+
+      .hero-title::before {
+        filter: blur(5px);
       }
 
       .nav-inner {

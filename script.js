@@ -14,6 +14,7 @@ const statsSection = document.querySelector(".stats-bar");
 const form = document.getElementById("quote-form");
 const successMessage = document.getElementById("form-success");
 const whatsappFloat = document.getElementById("whatsapp-float");
+const heroTitle = document.querySelector(".hero-title");
 const observedSections = Array.from(document.querySelectorAll("main section[id], header[id]"));
 const imageFallback =
   "data:image/svg+xml;charset=UTF-8," +
@@ -45,6 +46,33 @@ document.querySelectorAll("img").forEach((img) => {
 
 setNavState();
 window.addEventListener("scroll", setNavState, { passive: true });
+
+if (heroTitle && window.matchMedia("(pointer:fine)").matches) {
+  const resetHeroTitle = () => {
+    heroTitle.style.setProperty("--hero-title-x", "0");
+    heroTitle.style.setProperty("--hero-title-y", "0");
+    heroTitle.style.setProperty("--hero-title-glow-x", "50%");
+    heroTitle.style.setProperty("--hero-title-glow-y", "50%");
+    heroTitle.style.transform = "translate3d(0,0,0) rotateX(0deg) rotateY(0deg)";
+  };
+
+  heroTitle.addEventListener("pointermove", (event) => {
+    const rect = heroTitle.getBoundingClientRect();
+    const px = (event.clientX - rect.left) / rect.width;
+    const py = (event.clientY - rect.top) / rect.height;
+    const rx = (py - 0.5) * -8;
+    const ry = (px - 0.5) * 10;
+
+    heroTitle.style.setProperty("--hero-title-x", (px - 0.5).toFixed(3));
+    heroTitle.style.setProperty("--hero-title-y", (py - 0.5).toFixed(3));
+    heroTitle.style.setProperty("--hero-title-glow-x", `${(px * 100).toFixed(1)}%`);
+    heroTitle.style.setProperty("--hero-title-glow-y", `${(py * 100).toFixed(1)}%`);
+    heroTitle.style.transform = `translate3d(${ry * 0.2}px, ${rx * 0.18}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+
+  heroTitle.addEventListener("pointerleave", resetHeroTitle);
+  resetHeroTitle();
+}
 
 navToggle.addEventListener("click", () => {
   const expanded = navToggle.getAttribute("aria-expanded") === "true";
